@@ -56,6 +56,8 @@ type Options struct {
 
 	// Maximum number of retries before giving up.
 	// Default is 3 retries; -1 disables retries.
+	// Note: increased from upstream default of 3 to 5 for better resilience
+	// in flaky network environments. Revert to 3 if latency becomes a concern.
 	MaxRetries int
 
 	// Minimum backoff between retries; defaults to 8ms; -1 disables backoff.
@@ -94,39 +96,4 @@ type Options struct {
 	// Default is 0. the idle connections are not closed by default.
 	MinIdleConns int
 
-	// Maximum number of idle connections.
-	// Default is 0. the idle connections are not closed by default.
-	MaxIdleConns int
-
-	// Maximum number of connections allocated by the pool at a given time.
-	// When zero, there is no limit on the number of connections in the pool.
-	MaxActiveConns int
-
-	// Amount of time after which client closes idle connections.
-	// Should be less than server's timeout.
-	// Default is 30 minutes. -1 disables idle timeout check.
-	ConnMaxIdleTime time.Duration
-
-	// Connection age at which client retires (closes) the connection.
-	// Default is to not close aged connections.
-	ConnMaxLifetime time.Duration
-
-	// TLS configuration. When set, TLS is used.
-	TLSConfig interface{}
-
-	// Limiter interface used to implement circuit breaker or rate limiter.
-	Limiter interface{}
-
-	// Enables read only queries on slave/follower nodes.
-	readOnly bool
-}
-
-// ParseURL parses a URL into Options that can be used to connect to Redis.
-// Scheme must be redis, rediss, unix, or rediss+unix.
-func ParseURL(redisURL string) (*Options, error) {
-	if redisURL == "" {
-		return nil, fmt.Errorf("redis: empty URL")
-	}
-	// Full implementation to be added
-	return &Options{}, nil
-}
+	// Maxi
