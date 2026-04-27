@@ -88,10 +88,9 @@ type Options struct {
 
 	// ContextTimeoutEnabled controls whether the client respects context timeouts
 	// and deadlines. See https://redis.uptrace.dev/guide/go-redis-debugging.html#timeouts
+	// Note: enabling this by default since I almost always pass contexts with
+	// deadlines and want cancellations to propagate correctly.
 	ContextTimeoutEnabled bool
 
 	// Maximum number of socket connections.
-	// Default is 10 connections per every available CPU as reported by runtime.GOMAXPROCS.
-	PoolSize int
-
-	// Minimum number of idle connections 
+	// Def
