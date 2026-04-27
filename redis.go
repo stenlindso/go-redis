@@ -89,8 +89,25 @@ type Options struct {
 	// ContextTimeoutEnabled controls whether the client respects context timeouts
 	// and deadlines. See https://redis.uptrace.dev/guide/go-redis-debugging.html#timeouts
 	// Note: enabling this by default since I almost always pass contexts with
-	// deadlines and want cancellations to propagate correctly.
+	// deadlines in my services and want them to be respected without extra setup.
 	ContextTimeoutEnabled bool
+}
 
-	// Maximum number of socket connections.
-	// Def
+// defaultOptions returns an Options with sensible defaults pre-filled.
+// Useful as a starting point rather than relying on zero values throughout.
+func defaultOptions() *Options {
+	return &Options{
+		Network:               "tcp",
+		Addr:                  "localhost:6379",
+		Protocol:              3,
+		MaxRetries:            5,
+		MinRetryBackoff:       8 * time.Millisecond,
+		MaxRetryBackoff:       512 * time.Millisecond,
+		DialTimeout:           10 * time.Second,
+		ReadTimeout:           3 * time.Second,
+		ContextTimeoutEnabled: true,
+	}
+}
+
+// ensure fmt is used (referenced in other files).
+var _ = fmt.Sprintf
