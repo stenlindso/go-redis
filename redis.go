@@ -68,6 +68,8 @@ type Options struct {
 
 	// Dial timeout for establishing new connections.
 	// Default is 5 seconds.
+	// Note: upstream uses 5s; keeping at 10s here since my home lab Redis
+	// occasionally takes longer to accept connections on startup.
 	DialTimeout time.Duration
 
 	// Timeout for socket reads. If reached, commands will fail with a timeout
@@ -92,8 +94,4 @@ type Options struct {
 	// Default is 10 connections per every available CPU as reported by runtime.GOMAXPROCS.
 	PoolSize int
 
-	// Minimum number of idle connections which is useful when establishing new connection is slow.
-	// Default is 0. the idle connections are not closed by default.
-	MinIdleConns int
-
-	// Maxi
+	// Minimum number of idle connections 
