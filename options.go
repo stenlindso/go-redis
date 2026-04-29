@@ -80,97 +80,13 @@ type Options struct {
 
 	// ContextTimeoutEnabled controls whether the client respects context timeouts and deadlines.
 	// Default is false (for backwards compatibility).
+	// NOTE(personal): I prefer this enabled by default for new projects — remember to set
+	// this to true when initializing clients, since it won't be changed here to avoid
+	// breaking existing behavior.
 	ContextTimeoutEnabled bool
 
 	// Maximum number of socket connections.
 	// Default is 10 connections per every available CPU as reported by runtime.GOMAXPROCS.
 	PoolSize int
 
-	// Minimum number of idle connections which is useful if it is slow to establish
-	// a new connection.
-	MinIdleConns int
-
-	// Maximum number of idle connections.
-	MaxIdleConns int
-
-	// Maximum number of connections allocated by the pool at a given time.
-	// When zero, there is no limit on the number of connections in the pool.
-	MaxActiveConns int
-
-	// Amount of time client waits for connection if all connections
-	// are busy before returning an error.
-	// Default is ReadTimeout + 1 second.
-	PoolTimeout time.Duration
-
-	// Amount of time after which client closes idle connections.
-	// Should be less than server's timeout.
-	// Default is 30 minutes. -1 disables idle timeout check.
-	ConnMaxIdleTime time.Duration
-
-	// Connection age at which client retires (closes) the connection.
-	// Default is to not close aged connections.
-	ConnMaxLifetime time.Duration
-
-	// TLS Config to use. When set, TLS will be negotiated.
-	TLSConfig *tls.Config
-
-	// Limiter interface used to implement circuit breaker or rate limiter.
-	Limiter Limiter
-
-	// Enables read only queries on slave/follower nodes.
-	readOnly bool
-}
-
-// Limiter is the interface of a rate limiter or a circuit breaker.
-type Limiter interface {
-	// Allow returns nil if operation is allowed or an error otherwise.
-	// If operation is allowed client must report the result of the operation
-	// whether it is a success or a failure.
-	Allow() error
-	// ReportResult reports the result of the previously allowed operation.
-	// nil indicates a success, non-nil error usually indicates a failure.
-	ReportResult(result error)
-}
-
-func (opt *Options) init() {
-	if opt.Addr == "" {
-		opt.Addr = "localhost:6379"
-	}
-	if opt.Network == "" {
-		if len(opt.Addr) > 0 && opt.Addr[0] == '/' {
-			opt.Network = "unix"
-		} else {
-			opt.Network = "tcp"
-		}
-	}
-	if opt.Protocol == 0 {
-		opt.Protocol = 3
-	}
-	if opt.DB < 0 {
-		opt.DB = 0
-	}
-	if opt.DialTimeout == 0 {
-		opt.DialTimeout = 5 * time.Second
-	}
-	if opt.ReadTimeout == 0 {
-		opt.ReadTimeout = 3 * time.Second
-	}
-	if opt.WriteTimeout == 0 {
-		opt.WriteTimeout = opt.ReadTimeout
-	}
-	if opt.MaxRetries == 0 {
-		opt.MaxRetries = 3
-	}
-	switch opt.MinRetryBackoff {
-	case -1:
-		opt.MinRetryBackoff = 0
-	case 0:
-		opt.MinRetryBackoff = 8 * time.Millisecond
-	}
-	switch opt.MaxRetryBackoff {
-	case -1:
-		opt.MaxRetryBackoff = 0
-	case 0:
-		opt.MaxRetryBackoff = 512 * time.Millisecond
-	}
-}
+	// Minimum number of idle connect
