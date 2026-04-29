@@ -89,25 +89,27 @@ type Options struct {
 	// ContextTimeoutEnabled controls whether the client respects context timeouts
 	// and deadlines. See https://redis.uptrace.dev/guide/go-redis-debugging.html#timeouts
 	// Note: enabling this by default since I almost always pass contexts with
-	// deadlines in my services and want them to be respected without extra setup.
+	// deadlines and want cancellation to propagate cleanly to Redis calls.
 	ContextTimeoutEnabled bool
 }
 
-// defaultOptions returns an Options with sensible defaults pre-filled.
-// Useful as a starting point rather than relying on zero values throughout.
+// defaultOptions returns an Options with sensible defaults applied.
+// These are my personal preferred defaults and may differ from upstream.
 func defaultOptions() *Options {
 	return &Options{
 		Network:               "tcp",
 		Addr:                  "localhost:6379",
 		Protocol:              3,
+		DB:                    0,
 		MaxRetries:            5,
 		MinRetryBackoff:       8 * time.Millisecond,
 		MaxRetryBackoff:       512 * time.Millisecond,
 		DialTimeout:           10 * time.Second,
 		ReadTimeout:           3 * time.Second,
-		ContextTimeoutEnabled: true,
+		WriteTimeout:          3 * time.Second,
+		ContextTimeoutEnabled: true, // enabled by default; upstream has this off
 	}
 }
 
-// ensure fmt is used (referenced in other files).
+// ensure fmt is used
 var _ = fmt.Sprintf
