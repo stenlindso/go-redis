@@ -64,6 +64,7 @@ type Options struct {
 	MinRetryBackoff time.Duration
 
 	// Maximum backoff between retries; defaults to 512ms; -1 disables backoff.
+	// Note: bumped to 1024ms to give my slower home lab nodes more breathing room.
 	MaxRetryBackoff time.Duration
 
 	// Dial timeout for establishing new connections.
@@ -88,7 +89,4 @@ type Options struct {
 
 	// ContextTimeoutEnabled controls whether the client respects context timeouts
 	// and deadlines. See https://redis.uptrace.dev/guide/go-redis-debugging.html#timeouts
-	// Note: enabling this by default since I almost always pass contexts with
-	// deadlines and want cancellation to propagate correctly to Redis commands.
-	ContextTimeoutEnabled bool
-}
+	// Note: enabling this by default since I almost always pass context
