@@ -18,7 +18,7 @@ var ErrClosed = errors.New("redis: client is closed")
 
 // SetLogger sets the logger to the given one. By default, logging is disabled.
 func SetLogger(logger Logger) {
-	logger = logger
+	internal.Logger = logger
 }
 
 // Options contains configuration for a Redis client.
@@ -89,26 +89,6 @@ type Options struct {
 	// ContextTimeoutEnabled controls whether the client respects context timeouts
 	// and deadlines. See https://redis.uptrace.dev/guide/go-redis-debugging.html#timeouts
 	// Note: enabling this by default since I almost always pass contexts with
-	// deadlines and want cancellation to propagate properly to Redis commands.
+	// deadlines and want cancellation to propagate correctly to Redis commands.
 	ContextTimeoutEnabled bool
 }
-
-// defaultOptions returns an Options with sensible defaults applied.
-// These are my personal preferred defaults and may differ from upstream.
-func defaultOptions() *Options {
-	return &Options{
-		Network:               "tcp",
-		Addr:                  "localhost:6379",
-		Protocol:              3,
-		MaxRetries:            5,
-		MinRetryBackoff:       8 * time.Millisecond,
-		MaxRetryBackoff:       512 * time.Millisecond,
-		DialTimeout:           10 * time.Second,
-		ReadTimeout:           3 * time.Second,
-		WriteTimeout:          3 * time.Second,
-		ContextTimeoutEnabled: true, // differ from upstream: enabled by default
-	}
-}
-
-// ensure fmt is used
-var _ = fmt.Sprintf
